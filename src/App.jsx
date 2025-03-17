@@ -1,6 +1,5 @@
 import Header from './components/Header'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "../src/context/AuthContext";
 import Login from "../src/pages/Login";
 import Home from "../src/pages/Home";
 import Signup from "./pages/Signup";
@@ -8,12 +7,11 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile"
 import './App.css'
 
+
 function App() {
 
   return (
-
     <>
-
       <Router>
       <Header />
         <Routes>
@@ -25,8 +23,6 @@ function App() {
         </Routes>
       </Router>
     </>
-  
-
   )
 }
 

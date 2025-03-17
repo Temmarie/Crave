@@ -2,25 +2,31 @@ import { useState } from "react";
 import { signUpWithEmail, auth, googleProvider } from "../firebase";
 import { signInWithPopup, updateProfile } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
-
-
+import { uploadImageToCloudinary } from "../cloudinary";  // Helper function for Cloudinary
 
 const Signup = () => {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const userCredential = await signUpWithEmail(email, password);
-      
-      if (displayName.trim()) {
-        await updateProfile(userCredential.user, { displayName });
+      let photoURL = "https://via.placeholder.com/150"; // Default image
+
+      if (image) {
+        photoURL = await uploadImageToCloudinary(image);
       }
 
+      await updateProfile(userCredential.user, { displayName, photoURL });
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -29,7 +35,13 @@ const Signup = () => {
 
   const signInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // If Google provides a photo URL, keep it; otherwise, set a default
+      const photoURL = user.photoURL || "https://via.placeholder.com/150";
+
+      await updateProfile(user, { photoURL });
       navigate("/dashboard");
     } catch (error) {
       setError(error.message);
@@ -42,7 +54,7 @@ const Signup = () => {
         <h2 className="text-blue-900 text-2xl font-bold mb-4">Sign Up</h2>
         {error && <p className="text-indigo-500">{error}</p>}
         <form onSubmit={handleSignup}>
-        <input
+          <input
             type="text"
             placeholder="Display Name"
             className="w-full p-2 border rounded mb-2"
@@ -66,6 +78,7 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <input type="file" onChange={handleImageChange} className="mb-4 bg-indigo-200 text-white p-3 font-bold" />
           <button className="w-full bg-indigo-500 text-white p-2 rounded uppercase font-bold" type="submit">
             Sign Up
           </button>

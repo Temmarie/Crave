@@ -2,19 +2,27 @@ import React, { useState } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
+import { uploadImageToCloudinary } from "../cloudinary";
 
 const Profile = () => {
   const { user, logout } = useAuth();
   const [newDisplayName, setNewDisplayName] = useState(user?.displayName || "");
+  const [newImage, setNewImage] = useState(null);
   const [message, setMessage] = useState("");
 
-  const handleUpdateName = async () => {
-    if (newDisplayName.trim() === "") {
-      setMessage("Display name cannot be empty.");
-      return;
-    }
+  const handleImageChange = (e) => {
+    setNewImage(e.target.files[0]);
+  };
+
+  const handleUpdateProfile = async () => {
     try {
-      await updateProfile(auth.currentUser, { displayName: newDisplayName });
+      let photoURL = user.photoURL || "https://via.placeholder.com/150";
+
+      if (newImage) {
+        photoURL = await uploadImageToCloudinary(newImage);
+      }
+
+      await updateProfile(auth.currentUser, { displayName: newDisplayName, photoURL });
       setMessage("Profile updated successfully!");
     } catch (error) {
       setMessage("Error updating profile.");
@@ -26,13 +34,11 @@ const Profile = () => {
       <h2 className="text-darkAccent text-2xl font-bold">Edit Profile</h2>
       {user ? (
         <div>
-          <p className="text-gray-700">Email: {user.email}</p>
-          <p className="text-gray-700">User name: {user.displayName || "Not set"}</p>
-          <div className="mt-4">
-            <input type="text" value={newDisplayName} onChange={(e) => setNewDisplayName(e.target.value)} className="p-2 border rounded w-full" />
-            <button onClick={handleUpdateName} className="mt-2 bg-green-300 text-white p-2 rounded">Update Name</button>
-            {message && <p className="mt-2 text-gray-600">{message}</p>}
-          </div>
+          <img src={user.photoURL || "https://via.placeholder.com/150"} alt="Profile" className="w-24 h-24 rounded-full" />
+          <input type="file" onChange={handleImageChange} className="mt-2 mb-4 bg-indigo-200 text-white p-3 font-bold" />
+          <input type="text" value={newDisplayName} onChange={(e) => setNewDisplayName(e.target.value)} className="p-2 border rounded w-full" />
+          <button onClick={handleUpdateProfile} className="mt-2 bg-green-300 text-white p-2 rounded">Update Profile</button>
+          {message && <p className="mt-2 text-gray-600">{message}</p>}
           <button onClick={logout} className="mt-4 bg-red-400 text-white p-2 rounded">Logout</button>
         </div>
       ) : (
