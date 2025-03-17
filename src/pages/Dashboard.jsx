@@ -12,7 +12,7 @@ const Dashboard = () => {
         <div>
           <p className="text-gray-700">Email: {user.email}</p>
           <p className="text-gray-700">Display Name: {user.displayName || "Not set"}</p>
-          <img src={user.photoURL || "https://via.placeholder.com/150"} alt="Profile" className="w-24 h-24 rounded-full" />
+          <img src={user.photoURL || "https://placehold.co/600x400/C6D2FF/615FFF.png"} alt="Profile" className="w-24 h-24 rounded-full" />
           <Link to="/profile" className="mt-2 bg-blue-300 text-white p-2 rounded">Edit Profile</Link>
           <button onClick={logout} className="mt-4 bg-red-400 text-white p-2 rounded">Logout</button>
         </div>
