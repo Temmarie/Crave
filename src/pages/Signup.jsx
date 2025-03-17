@@ -10,6 +10,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
