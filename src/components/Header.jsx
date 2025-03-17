@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, signup } = useAuth();
 
 
   return (
@@ -15,7 +15,7 @@ const Header = () => {
           </button>
         </div>
       ) : (
-        <button className="bg-indigo-500 text-white px-4 py-2 rounded uppercase font-bold">
+        <button onClick={signup} className="bg-indigo-500 text-white px-4 py-2 rounded uppercase font-bold">
           Sign In
         </button>
       )}

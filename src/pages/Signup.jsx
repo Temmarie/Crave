@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { signUpWithEmail, auth, googleProvider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { signInWithPopup, updateProfile } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
+
+
 
 const Signup = () => {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -12,8 +15,13 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await signUpWithEmail(email, password);
-      navigate("/profile");
+      const userCredential = await signUpWithEmail(email, password);
+      
+      if (displayName.trim()) {
+        await updateProfile(userCredential.user, { displayName });
+      }
+
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -22,7 +30,7 @@ const Signup = () => {
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/profile");
+      navigate("/dashboard");
     } catch (error) {
       setError(error.message);
     }
@@ -34,6 +42,14 @@ const Signup = () => {
         <h2 className="text-blue-900 text-2xl font-bold mb-4">Sign Up</h2>
         {error && <p className="text-indigo-500">{error}</p>}
         <form onSubmit={handleSignup}>
+        <input
+            type="text"
+            placeholder="Display Name"
+            className="w-full p-2 border rounded mb-2"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            required
+          />
           <input
             type="email"
             placeholder="Email"
@@ -59,7 +75,7 @@ const Signup = () => {
           Sign Up with Google
         </button>
         <p className="mt-4 text-gray-600">
-          Already have an account? <a href="/login" className="text-indigo-500 uppercase">Login</a>
+          Already have an account? <Link to="/login" className="text-indigo-500 uppercase">Login</Link>
         </p>
       </div>
     </div>
