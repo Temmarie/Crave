@@ -13,6 +13,7 @@ const Signup = () => {
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
+  console.log(import.meta.env.VITE_FIREBASE_API_KEY); // Should log your API key
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -21,7 +22,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const userCredential = await signUpWithEmail(email, password);
-      let photoURL = "https://via.placeholder.com/150"; // Default image
+      let photoURL = "https://placehold.co/600x400/C6D2FF/615FFF.png"; // Default image
 
       if (image) {
         photoURL = await uploadImageToCloudinary(image);
@@ -40,7 +41,7 @@ const Signup = () => {
       const user = result.user;
 
       // If Google provides a photo URL, keep it; otherwise, set a default
-      const photoURL = user.photoURL || "https://via.placeholder.com/150";
+      const photoURL = user.photoURL || "https://placehold.co/600x400/C6D2FF/615FFF.png";
 
       await updateProfile(user, { photoURL });
       navigate("/dashboard");

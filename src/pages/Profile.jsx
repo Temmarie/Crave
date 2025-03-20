@@ -16,7 +16,7 @@ const Profile = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      let photoURL = user.photoURL || "https://via.placeholder.com/150";
+      let photoURL = user.photoURL || "https://placehold.co/600x400/C6D2FF/615FFF.png";
 
       if (newImage) {
         photoURL = await uploadImageToCloudinary(newImage);
