@@ -13,7 +13,6 @@ const Signup = () => {
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
-  console.log(import.meta.env.VITE_FIREBASE_API_KEY); // Should log your API key
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -29,7 +28,7 @@ const Signup = () => {
       }
 
       await updateProfile(userCredential.user, { displayName, photoURL });
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     }

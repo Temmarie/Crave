@@ -3,12 +3,16 @@ import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import { uploadImageToCloudinary } from "../cloudinary";
+import { Link, useNavigate } from 'react-router-dom';
+
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate(); // Get the history object
   const [newDisplayName, setNewDisplayName] = useState(user?.displayName || "");
   const [newImage, setNewImage] = useState(null);
   const [message, setMessage] = useState("");
+
 
   const handleImageChange = (e) => {
     setNewImage(e.target.files[0]);
@@ -17,17 +21,21 @@ const Profile = () => {
   const handleUpdateProfile = async () => {
     try {
       let photoURL = user.photoURL || "https://placehold.co/600x400/C6D2FF/615FFF.png";
-
       if (newImage) {
         photoURL = await uploadImageToCloudinary(newImage);
       }
-
-      await updateProfile(auth.currentUser, { displayName: newDisplayName, photoURL });
+      await updateProfile(auth.currentUser, {
+        displayName: newDisplayName,
+        photoURL
+      });
       setMessage("Profile updated successfully!");
+      navigate("/dashboard");  // Redirect to the dashboard
     } catch (error) {
       setMessage("Error updating profile.");
     }
   };
+
+
 
   return (
     <div className="p-6">
@@ -35,7 +43,7 @@ const Profile = () => {
       {user ? (
         <div>
           
-          <img src={user.photoURL || "https://placehold.co/600x400/C6D2FF/615FFF.png"} alt="Profile" className="w-24 h-24 rounded-full" />
+          <img src={user.photoURL || "https://placehold.co/600x400/C6D2FF/615FFF.png"} alt="Profile-Image" className="w-24 h-24 rounded-full" />
           
           <input type="file" onChange={handleImageChange} className="mt-2 mb-4 bg-indigo-200 text-white p-3 font-bold" />
           

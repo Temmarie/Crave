@@ -18,7 +18,7 @@ export const uploadImageToCloudinary = async (image) => {
       return data.secure_url; // Get the uploaded image URL
     } catch (error) {
       console.error("Error uploading image:", error);
-      return "https://via.placeholder.com/150"; // Default image in case of failure
+      return "https://placehold.co/600x400/C6D2FF/615FFF.png"; // Default image in case of failure
     }
   };
   

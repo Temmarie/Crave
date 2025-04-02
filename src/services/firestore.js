@@ -91,4 +91,54 @@ const addUserRecipe = async (userId, recipeData) => {
 
 
 
-export { addRecipe, getRecipes, saveFavorite, getUserFavorites, fetchRecipesFromAPI, addUserRecipe };
+// ai recipe generator
+
+// const aiRecipeGenerator = () => {
+//   const [ingredients, setIngredients] = useState("");
+//   const [generatedRecipe, setGeneratedRecipe] = useState(null);
+//   const { user } = useAuth();
+
+//   const generateRecipe = async () => {
+//     const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+
+//     try {
+//       const response = await fetch("https://api.openai.com/v1/completions", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${openaiApiKey}`,
+//         },
+//         body: JSON.stringify({
+//           model: "text-davinci-003",
+//           prompt: `Generate a recipe using: ${ingredients}`,
+//           max_tokens: 150,
+//         }),
+//       });
+
+//       const data = await response.json();
+
+//       if (data.choices && data.choices.length > 0) {
+//         setGeneratedRecipe(data.choices[0].text);
+
+//         // Save AI recipe to Firestore
+//         if (user) {
+//           await addDoc(collection(db, "aiRecipes"), {
+//             ingredients,
+//             recipe: data.choices[0].text,
+//             createdBy: user.uid,
+//             createdAt: new Date(),
+//           });
+//         }
+//       } else {
+//         alert("Failed to generate a recipe. Please try again.");
+//       }
+//     } catch (error) {
+//       console.error("Error generating recipe:", error);
+//       alert("An error occurred while generating the recipe. Please try again.");
+//     }
+//   };
+
+//   return { generateRecipe, generatedRecipe, setIngredients };
+// };
+
+export { addRecipe, getRecipes, saveFavorite, getUserFavorites, fetchRecipesFromAPI, addUserRecipe, aiRecipeGenerator };

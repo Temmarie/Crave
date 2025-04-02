@@ -22,7 +22,7 @@ const Login = () => {
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (error) {
       setError(error.message);
     }
