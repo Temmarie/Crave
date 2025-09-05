@@ -1,7 +1,7 @@
 import { db } from "../firebase";
-import { collection, addDoc, getDocs,  query, where  } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 
- const addRecipe = async (recipeData) => {
+const addRecipe = async (recipeData) => {
   try {
     const docRef = await addDoc(collection(db, "recipes"), recipeData);
     return docRef.id;
@@ -10,27 +10,24 @@ import { collection, addDoc, getDocs,  query, where  } from "firebase/firestore"
   }
 };
 
-
- const getRecipes = async () => {
+const getRecipes = async () => {
   const querySnapshot = await getDocs(collection(db, "recipes"));
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
- const saveFavorite = async (userId, recipeId) => {
-    try {
-      await addDoc(collection(db, "faves"), { userId, recipeId });
-    } catch (error) {
-      console.error("Error saving favorite:", error);
-    }
-  };
+const saveFavorite = async (userId, recipeId) => {
+  try {
+    await addDoc(collection(db, "faves"), { userId, recipeId });
+  } catch (error) {
+    console.error("Error saving favorite:", error);
+  }
+};
 
-  const getUserFavorites = async (userId) => {
-    const q = query(collection(db, "favorites"), where("userId", "==", userId));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data().recipeId);
-  };
-
-  
+const getUserFavorites = async (userId) => {
+  const q = query(collection(db, "favorites"), where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data().recipeId);
+};
 
 // Function to fetch recipes from the Spoonacular API and populate Firestore
 const fetchRecipesFromAPI = async () => {
@@ -39,7 +36,7 @@ const fetchRecipesFromAPI = async () => {
 
   try {
     const response = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=100`
+      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=10`
     );
     const data = await response.json();
 
@@ -63,33 +60,38 @@ const fetchRecipesFromAPI = async () => {
         description: recipeInfoData.summary,
         imageUrl: recipeInfoData.image,
         ingredients: ingredients,
-        instructions: recipeInfoData.analyzedInstructions[0]?.steps.map((step) => step.step) || [],
+        instructions:
+          recipeInfoData.analyzedInstructions[0]?.steps.map(
+            (step) => step.step
+          ) || [],
         cookTime: recipeInfoData.readyInMinutes || null,
         prepTime: recipeInfoData.preparationMinutes || null,
         servings: recipeInfoData.servings || null,
         tags: recipeInfoData.cuisines || [],
-        createdBy: "/users/USER_ID", // Replace USER_ID with the actual user ID if available
       });
 
       // Add a delay of 1 second between requests to avoid hitting the API rate limit
       await sleep(1000);
     }
+    alert("Recipes successfully added to Firestore!");
   } catch (error) {
     console.error("Error fetching recipes from API:", error);
+    alert("Failed to fetch recipes. Please try again.");
   }
 };
 
 // add user recipe to firestore
 const addUserRecipe = async (userId, recipeData) => {
   try {
-    const docRef = await addDoc(collection(db, `users/${userId}/userRecipes`), recipeData);
+    const docRef = await addDoc(
+      collection(db, `users/${userId}/userRecipes`),
+      recipeData
+    );
     return docRef.id;
   } catch (error) {
     console.error("Error adding user recipe:", error);
   }
 };
-
-
 
 // ai recipe generator
 
@@ -141,4 +143,12 @@ const addUserRecipe = async (userId, recipeData) => {
 //   return { generateRecipe, generatedRecipe, setIngredients };
 // };
 
-export { addRecipe, getRecipes, saveFavorite, getUserFavorites, fetchRecipesFromAPI, addUserRecipe, aiRecipeGenerator };
+export {
+  addRecipe,
+  getRecipes,
+  saveFavorite,
+  getUserFavorites,
+  fetchRecipesFromAPI,
+  addUserRecipe,
+  // aiRecipeGenerator,
+};
